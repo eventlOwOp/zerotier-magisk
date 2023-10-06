@@ -3,9 +3,10 @@ This magisk module enables you to start zerotier in the background after booting
 
 ## Installation
 
-1. download zipped code file from github.
+1. download zipped code file from github and unzip
 2. modify zerotier/network and write down your own network id.
-3. install and enjoy.
+3. zip the files, remember to put all files in the root path of the zipped file.
+4. install and enjoy.
 
 ### Scripts and binaries
 
