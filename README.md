@@ -2,6 +2,7 @@
 This magisk module enables you to start zerotier in the background after booting.
 
 ## Installation
+if you're using a device with an older kernel where this version does not work, you can move to branch kernel-4.14 and installation steps are the same.
 
 1. download zipped code file from github and unzip
 2. modify zerotier/network and write down your own network id.
