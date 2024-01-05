@@ -21,3 +21,5 @@ Note that the zerotier binaries are only build for aarch64, you can build it you
 Remember to delete `ZT_SSO_SUPPORTED=1` in `make-linux.mk` if you don't want to build zeroidc with rust.
 
 Download libnatpmp library from http://miniupnp.free.fr/files/ and configure linking options in `make-linux.mk`
+
+Or you can just download the source file modified by me in the zerotier branch, but be aware that it could be **OUTDATED**.
