@@ -10,7 +10,7 @@ but scripts in this branch may be **OUTDATED**.
 3. modify the config file at `/sdcard/Android/zerotier/network_id.txt" and put your 16-character network id in it with no trailing new line.
 4. restart and enjoy.
 
-To restart, you can just restart the whole system, or just execute `/data/adb/zerotier/restart.sh`; An android application to control zerotier (networkid, restart, ...) is scheduled.
+To restart, you can just restart the whole system, or just execute `/data/adb/zerotier/restart.sh`; An android application to control zerotier (networkid, restart, ...) has been add to the todo list.
 
 ### Scripts and binaries
 
