@@ -1,6 +1,6 @@
 id=zerotier
 name=Zerotier For Magisk
-version=v1.0.0
+version=v1.14.0
 versionCode=100
 author=eventlOwOp
-description=zerotier binary build for aarch64
+description=zerotier for magisk
