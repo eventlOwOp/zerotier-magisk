@@ -21,7 +21,7 @@ ln -s ${ZT_PATH}/zerotier-one ${ZT_PATH}/zerotier-cli
 ln -s ${ZT_PATH}/zerotier-one ${ZT_PATH}/zerotier-idtool
 
 ui_print "- create config dir"
-mkidir -p ${CONF_PATH}
+mkdir -p ${CONF_PATH}
 touch ${CONF_PATH}/${CONF_NAME}
 echo "1111111111111111" > ${CONF_PATH}/${CONF_NAME}
 
