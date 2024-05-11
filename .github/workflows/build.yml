@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: build
 
 # Controls when the workflow will run
 on:
@@ -50,8 +50,8 @@ jobs:
           CXX=aarch64-linux-android$api_version-clang++
 
           # "-D__GLIBC__=0" is a bypass, see zerotier/ZeroTierOne#2289
+          cd ZeroTierOne
           make -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../deps/aarch64" DEFS="-I../deps/include -D__GLIBC__=0"
-
           cd ..
 
           mkdir -p magisk/zerotier/lib
@@ -69,15 +69,14 @@ jobs:
           CC=armv7a-linux-androideabi$api_version-clang
           CXX=armv7a-linux-androideabi$api_version-clang++
 
-          # "-D__GLIBC__=0" is a bypass, see zerotier/ZeroTierOne#2289
-          make -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../deps/aarch64" DEFS="-I../deps/include -D__GLIBC__=0"
-
+          cd ZeroTierOne
+          make -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../deps/arm" DEFS="-I../deps/include -D__GLIBC__=0"
           cd ..
 
           mv ZeroTierOne/zerotier-one magisk/zerotier/
-          mv deps/aarch64/lic++_shared.so magisk/zerotier/lib/
+          mv deps/arm/lic++_shared.so magisk/zerotier/lib/
           cd magisk
-          zip -q -r ../zerotier-magisk-arm64.zip .
+          zip -q -r ../zerotier-magisk-arm.zip .
 
       - name: Debugging with tmate
         uses: mxschmitt/action-tmate@v3.18
