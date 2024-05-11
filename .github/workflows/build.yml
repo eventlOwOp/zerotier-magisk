@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 env:
-  api_version: 21 # min. 21
+  api_version: 28 # min. 21
   ndk: r26d # android-ndk-$ndk-linux.zip
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
