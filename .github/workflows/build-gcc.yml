@@ -53,7 +53,7 @@ jobs:
           cd ..
 
           cd ZeroTierOne
-          make --silent -j $(nproc) ZT_STATIC=1 ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp -s" DEFS="-I../libnatpmp"
+          make --silent -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp -s" DEFS="-I../libnatpmp"
           cd ..
 
           mkdir -p magisk/zerotier/lib
@@ -78,7 +78,7 @@ jobs:
           cd ZeroTierOne
           make clean
           # sed -i "s/armv7ve/armv7a/g" make-linux.mk
-          make -j $(nproc) ZT_STATIC=1 ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp -s" DEFS="-I../libnatpmp"
+          make -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp -s" DEFS="-I../libnatpmp"
           cd ..
 
           cp ZeroTierOne/zerotier-one magisk/zerotier/

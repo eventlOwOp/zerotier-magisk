@@ -14,7 +14,6 @@ ui_print "- set file permission"
 set_perm_recursive ${MODPATH}/zerotier 0 0 0755 0755
 
 ui_print "- create work dir"
-rm -rf ${ZT_PATH}
 mkdir -p ${ZT_PATH}
 mkdir ${ZT_PATH}/run ${ZT_PATH}/home
 mv ${MODPATH}/zerotier/* ${ZT_PATH}

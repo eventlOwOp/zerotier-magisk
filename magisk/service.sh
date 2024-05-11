@@ -89,6 +89,8 @@ ip rule add from all lookup main pref 1
 export LD_LIBRARY_PATH=/data/adb/zerotier/lib
 
 __start
+sleep 1
+_join
 
 rm -f $pipe
 mkfifo $pipe
@@ -97,7 +99,7 @@ while true
 do
   if read line < $pipe; then
     log "received commad $line"
-    case line in
+    case "$line" in
       "quit")
         log "stopped"
         break;;
