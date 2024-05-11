@@ -51,7 +51,6 @@ jobs:
       - name: Build for aarch64
         run: |
           PATH=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
-          PATH=`pwd`/libnatpmp:$PATH
           NDK_ROOT=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64
 
           CC=aarch64-linux-android$api_version-clang
@@ -63,7 +62,7 @@ jobs:
 
           # "-D__GLIBC__=0" is a bypass, see zerotier/ZeroTierOne#2289
           cd ZeroTierOne
-          make -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX DEFS="-D__GLIBC__=0"
+          make -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp" DEFS="-I../libnatpmp -D__GLIBC__=0"
           cd ..
 
           mkdir -p magisk/zerotier/lib
@@ -88,7 +87,7 @@ jobs:
 
           cd ZeroTierOne
           make clean
-          make -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX DEFS="-D__GLIBC__=0"
+          make -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp" DEFS="-I../libnatpmp -D__GLIBC__=0"
           cd ..
 
           cp ZeroTierOne/zerotier-one magisk/zerotier/
