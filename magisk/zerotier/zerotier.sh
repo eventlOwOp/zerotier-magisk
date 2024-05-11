@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/system/bin/sh
 pipe=/data/adb/zerotier/run/pipe
 if [[ ! -p $pipe ]]; then
     echo "daemon not running"

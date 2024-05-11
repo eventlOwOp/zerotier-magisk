@@ -21,7 +21,7 @@ _stop() {
 
   kill -9 $pid
   ret=$?
-  
+
   rm -rf ./run/pid
 
   if [ $ret -eq 0 ]; then
@@ -74,7 +74,7 @@ __start() {
 }
 _start() {
   if pid=$(pidof zerotier-one); then
-    log "zerotier-one already running"
+    log "zerotier-one already running pid $pid"
   else
     __start
     log "started zerotier-one pid $pid"
@@ -90,8 +90,6 @@ export LD_LIBRARY_PATH=/data/adb/zerotier/lib
 
 __start
 
-trap "rm -f $pipe" EXIT
-
 rm -f $pipe
 mkfifo $pipe
 
@@ -99,23 +97,20 @@ while true
 do
   if read line < $pipe; then
     log "received commad $line"
-    if [[ "$line" == 'quit' ]]; then
-      log "stopped"
-      break
-    elif [[ "$line" == 'start' ]]; then
-      _start
-    elif [[ "$line" == 'stop' ]]; then
-      _stop
-    elif [[ "$line" == 'restart' ]]; then
-      _stop
-      sleep 1
-      _start
-    elif [[ "$line" == 'join' ]]; then
-      _join
-    elif [[ "$line" == 'leave' ]]; then
-      _leave
-    else
-      log "unknown command $line"
-    fi
+    case line in
+      "quit")
+        log "stopped"
+        break;;
+      "start") _start;;
+      "stop") _stop;;
+      "restart")
+        _stop
+        sleep 1
+        _start;;
+      "join") _join;;
+      "leave") _leave;;
+      *)
+        log "unknown command $line";;
+    esac
   fi
 done

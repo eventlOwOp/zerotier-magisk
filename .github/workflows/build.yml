@@ -57,11 +57,11 @@ jobs:
           CXX=aarch64-linux-android$api_version-clang++
 
           cd libnatpmp
-          make CC=$CC natpmpc-shared
+          make --silent CC=$CC natpmpc-shared
           cd ..
 
           cd ZeroTierOne
-          make -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp" DEFS="-I../libnatpmp -D__GLIBC__=0"
+          make --silent -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp" DEFS="-I../libnatpmp -D__GLIBC__=0"
           cd ..
 
           mkdir -p magisk/zerotier/lib
@@ -95,5 +95,10 @@ jobs:
       #     cd magisk
       #     zip -q -r ../zerotier-magisk-arm.zip .
 
-      - name: Debugging with tmate
-        uses: mxschmitt/action-tmate@v3.18
+      # - name: Debugging with tmate
+      #   uses: mxschmitt/action-tmate@v3.18
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: zerotier-magisk-aarch64.zip

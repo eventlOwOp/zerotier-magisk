@@ -10,32 +10,52 @@
 
 **No conflicts with other android VPN service!**
 
+## Requirements
+
+Built with Android NDK Toolchain, support api 28 (Android 9.0) and above.
+
+`make-linux.mk` in ZeroTierOne does not support armv7 (see `-mtune=`), so it only supports aarch64 here
+
+Unofficial planet is not supported because I don't know hot to compile rust with NDK 😭
+
+Maybe we can compile with gcc cross-compiling toolchain statically, without linking system calls, but there could be potential compatibility problems.
+
 ## Installation
-If you're using a device with an older kernel where this version does not work, you can move to branch kernel-4.14 and installation steps are the same.
-but scripts in this branch may be **OUTDATED**.
 
 1. download release from github.
 2. install with magisk.
 3. modify the config file at `/sdcard/Android/zerotier/network_id.txt` and put your 16-character network id in it.
 4. restart and enjoy.
 
-To restart, you can just restart the whole system, or just execute `/data/adb/zerotier/restart.sh`; An android application to control zerotier (networkid, restart, ...) has been added to the todo list.
+To restart, execute (in root) `sh /data/adb/zerotier/zerotier.sh restart`; An android application to control zerotier (networkid, restart, ...) has been added to the todo list.
 
-### Scripts and binaries
+### Files
 
-all the scripts and binaries are placed in `/data/adb/zerotier/` , you can use termux to run them if needed.
-`add_ip_rule.sh` is used to make the `main` route table, which zerotier writes its routes to, available.
+```
+/data/adb/zerotier/
+ | - run/
+ |   | - pid                    # zerotier-one pid
+ |   | - pipe                   # pipe to service.sh
+ |   | - daemon.log             # service.sh log
+ |   ` - zerotier.log           # zerotier-one log
+ | - home/                      # zerotier-one home directory
+ |   ` - ...
+ | - lib/
+ |   ` - libc++_shared.so       # NDK dynamic library
+ | - zerotier.sh                # tool to communicate with service.sh
+ | - zerotier-one               # zerotier-one executable
+ | - zerotier-cli -> zerotier-one
+ ` - zerotier-idtool -> zerotier-one
+```
+
+all the scripts and binaries are placed in `/data/adb/zerotier/`.
+
+`zerotier.sh` writes commands to the pipe at `run/pipe` and `service.sh` read from it.
+
+`Usage: sh zerotier.sh {start|stop|restart|join|leave}`
+
+log files are placed in `run`, `daemon.log` for `service.sh` and `zerotier.log` for ZeroTierOne.
 
 ### Build binaries yourself
 
-The following steps have only been tested in "Termux" with the package manager "apt".
-
-Note that the zerotier binaries are only built for aarch64, you can build it yourself in "Termux".
-
-Download source files from [zerotier/ZeroTierOne](https://www.github.com/zerotier/ZeroTierOne).
-
-Delete `ZT_SSO_SUPPORTED=1` in `make-linux.mk` for "aarch64" (or your architecture). this will prevent building zeroidc with rust; the author encountered some problems building zeroidc
-
-Install package `natpmpc` using `apt install natpmpc` and update your `libnpth` library using `apt install libnpth`.
-
-At last run `make` or multithreaded `make -j8`.
+The binaries are built with Android NDK toolchains on Github Action, see `.github/workflow/build.yml` for detailed information.

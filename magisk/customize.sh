@@ -14,6 +14,7 @@ ui_print "- set file permission"
 set_perm_recursive ${MODPATH}/zerotier 0 0 0755 0755
 
 ui_print "- create work dir"
+rm -rf ${ZT_PATH}
 mkdir -p ${ZT_PATH}
 mkdir ${ZT_PATH}/run ${ZT_PATH}/home
 mv ${MODPATH}/zerotier/* ${ZT_PATH}
@@ -25,7 +26,7 @@ ui_print "- create config dir"
 mkdir -p ${CONF_PATH}
 if [[ ! -e ${CONF_PATH}/${CONF_NAME} ]]; then
   touch ${CONF_PATH}/${CONF_NAME}
-  echo "1111111111111111" > ${CONF_PATH}/${CONF_NAME}
+  echo "0000000000000000" > ${CONF_PATH}/${CONF_NAME}
 fi
 
 ui_print "- clean up"
