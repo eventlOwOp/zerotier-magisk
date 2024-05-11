@@ -22,8 +22,6 @@ _stop() {
   kill -9 $pid
   ret=$?
 
-  rm -rf ./run/pid
-
   if [ $ret -eq 0 ]; then
     log "stopped zerotier-one"
     return 0
@@ -37,7 +35,7 @@ _stop() {
 _join() {
   nid=$(cat $network_id_path)
 
-  ./zerotier-cli -D./home join $nid > $zerotier_log 2>&1
+  ./zerotier-cli -D./home join $nid >> $zerotier_log 2>&1
 
   if [ $? -ne 0 ]; then
     log "join network failed"
@@ -52,7 +50,7 @@ _join() {
 _leave() {
   nid=$(cat $network_id_path)
 
-  ./zerotier-cli -D./home leave $nid > $zerotier_log 2>&1
+  ./zerotier-cli -D./home leave $nid >> $zerotier_log 2>&1
 
   if [ $? -ne 0 ]; then
     log "leave network failed"
@@ -64,13 +62,11 @@ _leave() {
   return 0
 }
 __start() {
-  nohup ./zerotier-one -d home > $zerotier_log 2>&1 &
+  nohup ./zerotier-one -d home >> $zerotier_log 2>&1 &
 
   sleep 1
 
   pid=$(pidof zerotier-one)
-
-  echo $pid > ./run/pid
 }
 _start() {
   if pid=$(pidof zerotier-one); then
@@ -84,16 +80,15 @@ _start() {
 }
 
 cd /data/adb/zerotier
-rm -f $daemon_log
+rm -f ./run/*
+mkfifo $pipe
+
 ip rule add from all lookup main pref 1
 export LD_LIBRARY_PATH=/data/adb/zerotier/lib
 
 __start
 sleep 1
 _join
-
-rm -f $pipe
-mkfifo $pipe
 
 while true
 do
