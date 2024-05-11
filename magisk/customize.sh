@@ -15,6 +15,7 @@ set_perm_recursive ${MODPATH}/zerotier 0 0 0755 0755
 
 ui_print "- create work dir"
 mkdir -p ${ZT_PATH}
+mkdir ${ZT_PATH}/run ${ZT_PATH}/home
 mv ${MODPATH}/zerotier/* ${ZT_PATH}
 
 ln -s ${ZT_PATH}/zerotier-one ${ZT_PATH}/zerotier-cli
@@ -22,8 +23,10 @@ ln -s ${ZT_PATH}/zerotier-one ${ZT_PATH}/zerotier-idtool
 
 ui_print "- create config dir"
 mkdir -p ${CONF_PATH}
-touch ${CONF_PATH}/${CONF_NAME}
-echo "1111111111111111" > ${CONF_PATH}/${CONF_NAME}
+if [[ ! -e ${CONF_PATH}/${CONF_NAME} ]]; then
+  touch ${CONF_PATH}/${CONF_NAME}
+  echo "1111111111111111" > ${CONF_PATH}/${CONF_NAME}
+fi
 
 ui_print "- clean up"
 rm -rf ${MODPATH}/customize.sh 2>/dev/null
