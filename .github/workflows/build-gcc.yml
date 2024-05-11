@@ -41,7 +41,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Prepare GCC Toolchain
         run: |
-          sudo apt-get install -y gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf g++-aarch64-linux-gnu g++-arm-linux-gnueabihf
+          sudo apt-get install -qqy gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf g++-aarch64-linux-gnu g++-arm-linux-gnueabihf
 
       - name: Build for aarch64
         run: |
@@ -94,9 +94,13 @@ jobs:
 
       - name: Release
         uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
             zerotier-magisk-aarch64-gcc.zip
             zerotier-magisk-arm-gcc.zip
-          tag_name: SNAPSHOT-${{ steps.date.outputs.date }}
-          name: SNAPSHOT-${{ steps.date.outputs.date }}
+          tag_name: SNAPSHOT-GCC-${{ steps.date.outputs.date }}
+          name: SNAPSHOT-GCC-${{ steps.date.outputs.date }}
+          draft: false
+          prerelease: true

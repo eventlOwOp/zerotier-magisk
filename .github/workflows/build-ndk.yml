@@ -104,8 +104,12 @@ jobs:
 
       - name: Release
         uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
             zerotier-magisk-aarch64-ndk.zip
-          tag_name: SNAPSHOT-${{ steps.date.outputs.date }}
-          name: SNAPSHOT-${{ steps.date.outputs.date }}
+          tag_name: SNAPSHOT-NDK-${{ steps.date.outputs.date }}
+          name: SNAPSHOT-NDK-${{ steps.date.outputs.date }}
+          draft: false
+          prerelease: true
