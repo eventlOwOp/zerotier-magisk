@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: build
+name: build with NDK toolchains
 
 # Controls when the workflow will run
 on:
@@ -68,7 +68,7 @@ jobs:
           cp ZeroTierOne/zerotier-one magisk/zerotier
           cp $NDK_ROOT/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so magisk/zerotier/lib
           cd magisk
-          zip -q -r ../zerotier-magisk-aarch64.zip .
+          zip -q -r ../zerotier-magisk-aarch64-ndk.zip .
 
       # - name: Build for arm
       #   run: |
@@ -93,12 +93,19 @@ jobs:
       #     cp ZeroTierOne/zerotier-one magisk/zerotier/
       #     cp $NDK_ROOT/sysroot/usr/lib/arm-linux-android/libc++_shared.so magisk/zerotier/lib
       #     cd magisk
-      #     zip -q -r ../zerotier-magisk-arm.zip .
+      #     zip -q -r ../zerotier-magisk-arm-ndk.zip .
 
       # - name: Debugging with tmate
       #   uses: mxschmitt/action-tmate@v3.18
 
+      - name: Get Date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: zerotier-magisk-aarch64.zip
+          files: |
+            zerotier-magisk-aarch64-ndk.zip
+          tag_name: SNAPSHOT-${{ steps.date.outputs.date }}
+          release_name: SNAPSHOT-${{ steps.date.outputs.date }}
