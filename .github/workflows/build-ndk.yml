@@ -108,4 +108,4 @@ jobs:
           files: |
             zerotier-magisk-aarch64-ndk.zip
           tag_name: SNAPSHOT-${{ steps.date.outputs.date }}
-          release_name: SNAPSHOT-${{ steps.date.outputs.date }}
+          name: SNAPSHOT-${{ steps.date.outputs.date }}

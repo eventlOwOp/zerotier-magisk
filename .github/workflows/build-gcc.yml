@@ -41,7 +41,7 @@ jobs:
       # Runs a single command using the runners shell
       - name: Prepare GCC Toolchain
         run: |
-          apt-get install -y gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf g++-aarch64-linux-gnu g++-arm-linux-gnueabihf
+          sudo apt-get install -y gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf g++-aarch64-linux-gnu g++-arm-linux-gnueabihf
 
       - name: Build for aarch64
         run: |
@@ -99,4 +99,4 @@ jobs:
             zerotier-magisk-aarch64-gcc.zip
             zerotier-magisk-arm-gcc.zip
           tag_name: SNAPSHOT-${{ steps.date.outputs.date }}
-          release_name: SNAPSHOT-${{ steps.date.outputs.date }}
+          name: SNAPSHOT-${{ steps.date.outputs.date }}
