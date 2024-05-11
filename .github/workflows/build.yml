@@ -70,30 +70,30 @@ jobs:
           cd magisk
           zip -q -r ../zerotier-magisk-aarch64.zip .
 
-      - name: Build for arm
-        run: |
-          PATH=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
-          PATH=`pwd`/libnatpmp:$PATH
-          NDK_ROOT=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64
+      # - name: Build for arm
+      #   run: |
+      #     PATH=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+      #     PATH=`pwd`/libnatpmp:$PATH
+      #     NDK_ROOT=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64
 
-          CC=armv7a-linux-androideabi$api_version-clang
-          CXX=armv7a-linux-androideabi$api_version-clang++
+      #     CC=armv7a-linux-androideabi$api_version-clang
+      #     CXX=armv7a-linux-androideabi$api_version-clang++
 
-          cd libnatpmp
-          make clean
-          make CC=$CC natpmpc-shared
-          cd ..
+      #     cd libnatpmp
+      #     make clean
+      #     make CC=$CC natpmpc-shared
+      #     cd ..
 
-          cd ZeroTierOne
-          make clean
-          sed -i "s/armv7ve/armv7a/g" make-linux.mk
-          make -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp" DEFS="-I../libnatpmp -D__GLIBC__=0"
-          cd ..
+      #     cd ZeroTierOne
+      #     make clean
+      #     sed -i "s/armv7ve/armv7a/g" make-linux.mk
+      #     make -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp" DEFS="-I../libnatpmp -D__GLIBC__=0"
+      #     cd ..
 
-          cp ZeroTierOne/zerotier-one magisk/zerotier/
-          cp $NDK_ROOT/sysroot/usr/lib/arm-linux-android/libc++_shared.so magisk/zerotier/lib
-          cd magisk
-          zip -q -r ../zerotier-magisk-arm.zip .
+      #     cp ZeroTierOne/zerotier-one magisk/zerotier/
+      #     cp $NDK_ROOT/sysroot/usr/lib/arm-linux-android/libc++_shared.so magisk/zerotier/lib
+      #     cd magisk
+      #     zip -q -r ../zerotier-magisk-arm.zip .
 
       - name: Debugging with tmate
         uses: mxschmitt/action-tmate@v3.18

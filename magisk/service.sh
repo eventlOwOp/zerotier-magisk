@@ -13,16 +13,16 @@ log() {
   echo "[$t][$$][L] $1" >> $daemon_log
 }
 _stop() {
-  if [ $pid -eq -1 ]; then
-  log "zerotier-one not running"
+  pid=$(pidof zerotier-one)
+  if [ $? -ne 0 ]; then
+    log "zerotier-one not running"
     return 1
   fi
 
   kill -9 $pid
   ret=$?
-  pid=-1
-
-  echo $pid > ./run/pid
+  
+  rm -rf ./run/pid
 
   if [ $ret -eq 0 ]; then
     log "stopped zerotier-one"
@@ -73,7 +73,7 @@ __start() {
   echo $pid > ./run/pid
 }
 _start() {
-  if [ $pid -ne -1 ]; then
+  if pid=$(pidof zerotier-one); then
     log "zerotier-one already running"
   else
     __start
