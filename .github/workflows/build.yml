@@ -45,6 +45,7 @@ jobs:
       - name: Build for aarch64
         run: |
           PATH=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+          NDK_ROOT=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64
 
           CC=aarch64-linux-android$api_version-clang
           CXX=aarch64-linux-android$api_version-clang++
@@ -55,8 +56,8 @@ jobs:
           cd ..
 
           mkdir -p magisk/zerotier/lib
-          mv ZeroTierOne/zerotier-one magisk/zerotier
-          mv deps/aarch64/lic++_shared.so magisk/zerotier/lib
+          cp ZeroTierOne/zerotier-one magisk/zerotier
+          cp $NDK_ROOT/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so magisk/zerotier/lib
           cd magisk
           zip -q -r ../zerotier-magisk-aarch64.zip .
 
@@ -65,6 +66,7 @@ jobs:
       - name: Build for arm
         run: |
           PATH=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+          NDK_ROOT=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64
 
           CC=armv7a-linux-androideabi$api_version-clang
           CXX=armv7a-linux-androideabi$api_version-clang++
@@ -73,8 +75,8 @@ jobs:
           make -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../deps/arm" DEFS="-I../deps/include -D__GLIBC__=0"
           cd ..
 
-          mv ZeroTierOne/zerotier-one magisk/zerotier/
-          mv deps/arm/lic++_shared.so magisk/zerotier/lib/
+          cp ZeroTierOne/zerotier-one magisk/zerotier/
+          cp $NDK_ROOT/sysroot/usr/lib/arm-linux-android/libc++_shared.so magisk/zerotier/lib
           cd magisk
           zip -q -r ../zerotier-magisk-arm.zip .
 
