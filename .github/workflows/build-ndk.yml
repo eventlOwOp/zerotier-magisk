@@ -48,7 +48,12 @@ jobs:
           wget -qO ndk.zip https://dl.google.com/android/repository/android-ndk-$ndk-linux.zip
           unzip -qq ndk.zip "android-ndk-$ndk/toolchains/*" && rm ndk.zip -f
 
-      - name: Build for aarch64
+      - name: Patch ZeroTier for Cross-Compile
+        run: |
+          pip3 install toml
+          python3 build/build_helper.py
+
+      - name: Build for Aarch64
         run: |
           PATH=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
           NDK_ROOT=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64
@@ -57,10 +62,12 @@ jobs:
           CXX=aarch64-linux-android$api_version-clang++
 
           cd libnatpmp
+          make clean
           make --silent CC=$CC natpmpc-shared
           cd ..
 
           cd ZeroTierOne
+          make clean
           make --silent -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp" DEFS="-I../libnatpmp -D__GLIBC__=0"
           cd ..
 
@@ -70,37 +77,33 @@ jobs:
           cd magisk
           zip -q -r ../zerotier-magisk-aarch64-ndk.zip .
 
-      # - name: Build for arm
-      #   run: |
-      #     PATH=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
-      #     PATH=`pwd`/libnatpmp:$PATH
-      #     NDK_ROOT=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64
+      - name: Build for Arm
+        run: |
+          PATH=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+          NDK_ROOT=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64
 
-      #     CC=armv7a-linux-androideabi$api_version-clang
-      #     CXX=armv7a-linux-androideabi$api_version-clang++
+          CC=armv7a-linux-androideabi$api_version-clang
+          CXX=armv7a-linux-androideabi$api_version-clang++
 
-      #     cd libnatpmp
-      #     make clean
-      #     make CC=$CC natpmpc-shared
-      #     cd ..
+          cd libnatpmp
+          make clean
+          make CC=$CC natpmpc-shared
+          cd ..
 
-      #     cd ZeroTierOne
-      #     make clean
-      #     sed -i "s/armv7ve/armv7a/g" make-linux.mk
-      #     make -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp" DEFS="-I../libnatpmp -D__GLIBC__=0"
-      #     cd ..
+          cd ZeroTierOne
+          mv make-linux.mk.arm.ndk make-linux.mk
+          make clean
+          make -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp" DEFS="-I../libnatpmp -D__GLIBC__=0"
+          cd ..
 
-      #     cp ZeroTierOne/zerotier-one magisk/zerotier/
-      #     cp $NDK_ROOT/sysroot/usr/lib/arm-linux-android/libc++_shared.so magisk/zerotier/lib
-      #     cd magisk
-      #     zip -q -r ../zerotier-magisk-arm-ndk.zip .
-
-      # - name: Debugging with tmate
-      #   uses: mxschmitt/action-tmate@v3.18
+          cp ZeroTierOne/zerotier-one magisk/zerotier/
+          cp $NDK_ROOT/sysroot/usr/lib/arm-linux-android/libc++_shared.so magisk/zerotier/lib
+          cd magisk
+          zip -q -r ../zerotier-magisk-arm-ndk.zip .
 
       - name: Get Date
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
       - name: Release
         uses: softprops/action-gh-release@v2
@@ -109,7 +112,11 @@ jobs:
         with:
           files: |
             zerotier-magisk-aarch64-ndk.zip
+            zerotier-magisk-arm-ndk.zip
           tag_name: SNAPSHOT-NDK-${{ steps.date.outputs.date }}
           name: SNAPSHOT-NDK-${{ steps.date.outputs.date }}
           draft: false
           prerelease: true
+
+      # - name: Debugging with tmate
+      #   uses: mxschmitt/action-tmate@v3.18

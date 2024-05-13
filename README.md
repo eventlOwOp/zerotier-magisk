@@ -34,7 +34,6 @@ To restart, execute (in root) `sh /data/adb/zerotier/zerotier.sh restart`; An an
 ```
 /data/adb/zerotier/
  | - run/
- |   | - pid                    # zerotier-one pid
  |   | - pipe                   # pipe to service.sh
  |   | - daemon.log             # service.sh log
  |   ` - zerotier.log           # zerotier-one log

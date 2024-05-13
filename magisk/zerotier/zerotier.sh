@@ -1,5 +1,6 @@
 #!/system/bin/sh
 pipe=/data/adb/zerotier/run/pipe
+temp_output=/data/adb/zerotier/run/temp.out
 if [[ ! -p $pipe ]]; then
     echo "daemon not running"
     exit 1

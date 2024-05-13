@@ -6,11 +6,13 @@ pipe=/data/adb/zerotier/run/pipe
 zerotier_log=/data/adb/zerotier/run/zerotier.log
 daemon_log=/data/adb/zerotier/run/daemon.log
 network_id_path=/sdcard/Android/zerotier/network_id.txt
+temp_output=/data/adb/zerotier/run/temp.out
 pid=-1
 
 log() {
   t=`date +"%m-%d %H:%M:%S.%3N"`
   echo "[$t][$$][L] $1" >> $daemon_log
+  echo $1 >> $temp_output
 }
 _stop() {
   pid=$(pidof zerotier-one)
@@ -35,7 +37,7 @@ _stop() {
 _join() {
   nid=$(cat $network_id_path)
 
-  ./zerotier-cli -D./home join $nid >> $zerotier_log 2>&1
+  ./zerotier-cli join $nid >> $zerotier_log 2>&1
 
   if [ $? -ne 0 ]; then
     log "join network failed"
@@ -50,7 +52,7 @@ _join() {
 _leave() {
   nid=$(cat $network_id_path)
 
-  ./zerotier-cli -D./home leave $nid >> $zerotier_log 2>&1
+  ./zerotier-cli leave $nid >> $zerotier_log 2>&1
 
   if [ $? -ne 0 ]; then
     log "leave network failed"
@@ -62,7 +64,7 @@ _leave() {
   return 0
 }
 __start() {
-  nohup ./zerotier-one -d home >> $zerotier_log 2>&1 &
+  nohup ./zerotier-one -d >> $zerotier_log 2>&1 &
 
   sleep 1
 
@@ -87,8 +89,7 @@ ip rule add from all lookup main pref 1
 export LD_LIBRARY_PATH=/data/adb/zerotier/lib
 
 __start
-sleep 1
-_join
+(sleep 20 && _join) &
 
 while true
 do

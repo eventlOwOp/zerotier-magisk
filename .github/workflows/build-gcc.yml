@@ -18,7 +18,7 @@ jobs:
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -32,53 +32,61 @@ jobs:
           repository: zerotier/ZeroTierOne
           path: ZeroTierOne
 
-      - name: Checkout libnatpmp
-        uses: actions/checkout@v4
-        with:
-          repository: miniupnp/libnatpmp
-          path: libnatpmp
-
       # Runs a single command using the runners shell
       - name: Prepare GCC Toolchain
         run: |
           sudo apt-get install -qqy gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf g++-aarch64-linux-gnu g++-arm-linux-gnueabihf
+          rustup target add aarch64-unknown-linux-gnu
 
-      - name: Build for aarch64
+          sudo dpkg --add-architecture arm64
+          sudo mv build/sources.list /etc/apt/sources.list
+          sudo apt-get update -qqy
+          sudo apt-get install -qqy libssl-dev:arm64
+
+      - name: Patch ZeroTier for Cross-Compile
+        run: |
+          pip3 install toml
+          python3 build/build_helper.py
+
+      - name: Build for Aarch64
         run: |
           CC=aarch64-linux-gnu-gcc
           CXX=aarch64-linux-gnu-g++
 
-          cd libnatpmp
-          make --silent CC=$CC natpmpc-shared
-          cd ..
-
           cd ZeroTierOne
-          make --silent -j $(nproc) ZT_SSO_SUPPORTED=0 ZT_STATIC=1 ZT_DEBUG=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp -s" DEFS="-I../libnatpmp"
+          mv make-linux.mk.aarch64 make-linux.mk
+          make clean
+          make --silent -j $(nproc) ZT_SSO_SUPPORTED=0 ZT_STATIC=1 ZT_DEBUG=0 CC="$CC -w" CXX="$CXX -w" LDFLAGS="-s"
           cd ..
 
-          mkdir -p magisk/zerotier/lib
           cp ZeroTierOne/zerotier-one magisk/zerotier
           cd magisk
           zip -q -r ../zerotier-magisk-aarch64-gcc.zip .
 
-      - name: Build for arm
+      - name: Build for Aarch64 with SSO
         run: |
-          PATH=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
-          PATH=`pwd`/libnatpmp:$PATH
-          NDK_ROOT=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64
-
-          CC=arm-linux-gnueabihf-gcc
-          CXX=arm-linux-gnueabihf-g++
-
-          cd libnatpmp
-          make clean
-          make CC=$CC natpmpc-shared
-          cd ..
+          CC=aarch64-linux-gnu-gcc
+          CXX=aarch64-linux-gnu-g++
 
           cd ZeroTierOne
           make clean
-          # sed -i "s/armv7ve/armv7a/g" make-linux.mk
-          make -j $(nproc) ZT_SSO_SUPPORTED=0 ZT_STATIC=1 ZT_DEBUG=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp -s" DEFS="-I../libnatpmp"
+          make --silent -j $(nproc) ZT_STATIC=1 ZT_DEBUG=0 CC="$CC -w" CXX="$CXX -w" LDFLAGS="-s"
+          cd ..
+
+          cp ZeroTierOne/zerotier-one magisk/zerotier
+          cd magisk
+          zip -q -r ../zerotier-magisk-aarch64-gcc-SSO.zip .
+
+      - name: Build for Arm
+        run: |
+          CC=arm-linux-gnueabihf-gcc
+          CXX=arm-linux-gnueabihf-g++
+          FLAGS="-w -fcompare-debug-second"
+
+          cd ZeroTierOne
+          mv make-linux.mk.arm make-linux.mk
+          make clean
+          make --silent -j $(nproc) ZT_SSO_SUPPORTED=0 ZT_STATIC=1 ZT_DEBUG=0 CC="$CC $FLAGS" CXX="$CXX $FLAGS" LDFLAGS="-s"
           cd ..
 
           cp ZeroTierOne/zerotier-one magisk/zerotier/
@@ -87,7 +95,7 @@ jobs:
 
       - name: Get Date
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
       - name: Release
         uses: softprops/action-gh-release@v2
@@ -95,6 +103,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           files: |
+            zerotier-magisk-aarch64-gcc-SSO.zip
             zerotier-magisk-aarch64-gcc.zip
             zerotier-magisk-arm-gcc.zip
           tag_name: SNAPSHOT-GCC-${{ steps.date.outputs.date }}
@@ -102,5 +111,5 @@ jobs:
           draft: false
           prerelease: true
 
-      - name: Debugging with tmate
-        uses: mxschmitt/action-tmate@v3.18
+      # - name: Debugging with tmate
+      #   uses: mxschmitt/action-tmate@v3.18
