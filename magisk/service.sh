@@ -2,20 +2,27 @@
 
 MODDIR=${0%/*}
 
+zerotier_root=/data/adb/zerotier
+
 pipe=/data/adb/zerotier/run/pipe
 zerotier_log=/data/adb/zerotier/run/zerotier.log
 daemon_log=/data/adb/zerotier/run/daemon.log
 network_id_path=/sdcard/Android/zerotier/network_id.txt
-temp_output=/data/adb/zerotier/run/temp.out
 pid=-1
+
+cli_output=/data/adb/zerotier/run/cli.out
+cli_pid=/data/adb/zerotier/run/cli.pid
 
 log() {
   t=`date +"%m-%d %H:%M:%S.%3N"`
-  echo "[$t][$$][L] $1" >> $daemon_log
-  echo $1 >> $temp_output
+  echo -e "[$t][$$][L] $1" >> $daemon_log
+  echo -e "$1" >> $cli_output
+}
+log_cli() {
+  echo -e "$1" >> $cli_output
 }
 _stop() {
-  pid=$(pidof zerotier-one)
+  pid=`pidof zerotier-one`
   if [ $? -ne 0 ]; then
     log "zerotier-one not running"
     return 1
@@ -34,44 +41,15 @@ _stop() {
   return 1
 }
 
-_join() {
-  nid=$(cat $network_id_path)
-
-  ./zerotier-cli join $nid >> $zerotier_log 2>&1
-
-  if [ $? -ne 0 ]; then
-    log "join network failed"
-    return 1
-  else
-    log "joined $nid"
-  fi
-
-  return 0
-}
-
-_leave() {
-  nid=$(cat $network_id_path)
-
-  ./zerotier-cli leave $nid >> $zerotier_log 2>&1
-
-  if [ $? -ne 0 ]; then
-    log "leave network failed"
-    return 1
-  else
-    log "left $nid"
-  fi
-
-  return 0
-}
 __start() {
   nohup ./zerotier-one -d >> $zerotier_log 2>&1 &
 
   sleep 1
 
-  pid=$(pidof zerotier-one)
+  pid=`pidof zerotier-one`
 }
 _start() {
-  if pid=$(pidof zerotier-one); then
+  if pid=`pidof zerotier-one`; then
     log "zerotier-one already running pid $pid"
   else
     __start
@@ -80,6 +58,49 @@ _start() {
   
   return 0
 }
+_status() {
+  # fake systemd lol
+  if pid=`pidof zerotier-one`; then
+    log_cli "\033[32m●\033[0m zerotier-one.service - ZeroTier One - Global Area Networking"
+    log_cli "     Active: \033[32mactive (running)\033[0m"
+    log_cli "   Main PID: $pid (zerotier-one)" 
+  else
+    pid_=`cat $zerotier_root/home/zerotier-one.pid`
+    log_cli "○ zerotier-one is stopped"
+    log_cli "     Active: inactive (dead)"
+    log_cli "   Main PID: $pid_ (code=exited)"
+  fi
+}
+
+# _join() {
+#   nid=$(cat $network_id_path)
+
+#   ./zerotier-cli join $nid >> $zerotier_log 2>&1
+
+#   if [ $? -ne 0 ]; then
+#     log "join network failed"
+#     return 1
+#   else
+#     log "joined $nid"
+#   fi
+
+#   return 0
+# }
+
+# _leave() {
+#   nid=$(cat $network_id_path)
+
+#   ./zerotier-cli leave $nid >> $zerotier_log 2>&1
+
+#   if [ $? -ne 0 ]; then
+#     log "leave network failed"
+#     return 1
+#   else
+#     log "left $nid"
+#   fi
+
+#   return 0
+# }
 
 cd /data/adb/zerotier
 rm -f ./run/*
@@ -93,22 +114,20 @@ __start
 
 while true
 do
-  if read line < $pipe; then
-    log "received commad $line"
-    case "$line" in
-      "quit")
-        log "stopped"
-        break;;
+  if read cmd < $pipe; then
+    case "$cmd" in
       "start") _start;;
       "stop") _stop;;
       "restart")
         _stop
         sleep 1
         _start;;
-      "join") _join;;
-      "leave") _leave;;
+      "status") _status;;
       *)
-        log "unknown command $line";;
+        log "unknown command $cmd";;
     esac
+
+    cpid=`cat $cli_pid`
+    kill -SIGUSR1 $cpid;
   fi
 done
