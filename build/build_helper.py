@@ -17,16 +17,11 @@ with open(cargo_toml_path, 'w') as f:
 # Patch ZeroTierOne/rustybits/zeroidc/.cargo/config.toml
 
 # > +ZeroTierOne/rustybits/zeroidc/.cargo/config.toml
-# [target.armv7-unknown-linux-gnueabihf]
-# linker = "arm-linux-gnueabihf-gcc"
-# rustflags = ["-C", "target-feature=+crt-static"]
 # [target.aarch64-unknown-linux-gnu]
 # linker = "aarch64-linux-gnu-gcc"
-# rustflags = ["-C", "target-feature=+crt-static"]
 
 config_toml_path = "ZeroTierOne/rustybits/zeroidc/.cargo/config.toml"
 config_toml = toml.load(config_toml_path)
-config_toml['target']['armv7-unknown-linux-gnueabihf'] = { "linker": "arm-linux-gnueabihf-gcc" }
 config_toml['target']['aarch64-unknown-linux-gnu'] = { "linker": "aarch64-linux-gnu-gcc" }
 with open(config_toml_path, 'w') as f:
     toml.dump(config_toml, f)
