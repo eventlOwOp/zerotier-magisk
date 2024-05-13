@@ -34,7 +34,7 @@ if [[ "$1" ]]; then
     "start") run $1;;
     "stop") run $1;;
     "restart") run $1;;
-    "status")) run $1;;
+    "status") run $1;;
     *)
       echo "unknown command $1";;
   esac
@@ -43,6 +43,7 @@ else
   exit 1
 fi
 
-sleep 10
+sleep 20 &
+wait $!
 echo "time out"
 exit 1

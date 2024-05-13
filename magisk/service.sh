@@ -66,7 +66,7 @@ _status() {
     log_cli "   Main PID: $pid (zerotier-one)" 
   else
     pid_=`cat $zerotier_root/home/zerotier-one.pid`
-    log_cli "○ zerotier-one is stopped"
+    log_cli "○ zerotier-one.service - ZeroTier One - Global Area Networking"
     log_cli "     Active: inactive (dead)"
     log_cli "   Main PID: $pid_ (code=exited)"
   fi
