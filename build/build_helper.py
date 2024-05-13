@@ -56,10 +56,10 @@ with open(make_linux_path, 'r') as file:
                         "$(shell $(CC) -dumpmachine | cut -d '-' -f 1)", 'armhf'
                     ).replace(
                         'override CFLAGS+=-mfloat-abi=hard -march=armv6zk -marm -mfpu=vfp -mno-unaligned-access -mtp=cp15 -mcpu=arm1176jzf-s',
-                        'override CFLAGS+=-mfloat-abi=hard -march=armv7-a -marm -mfpu=vfp'
+                        'override CFLAGS+=-march=armv7-a -marm -mfpu=vfp'
                     ).replace(
                         'override CXXFLAGS+=-mfloat-abi=hard -march=armv6zk -marm -mfpu=vfp -fexceptions -mno-unaligned-access -mtp=cp15 -mcpu=arm1176jzf-s',
-                        'override CFLAGS+=-mfloat-abi=hard -march=armv7-a -marm -mfpu=vfp -fexceptions'
+                        'override CFLAGS+=-march=armv7-a -marm -mfpu=vfp -fexceptions'
                     )
     
     with open(make_linux_path + '.aarch64', 'w') as file:
