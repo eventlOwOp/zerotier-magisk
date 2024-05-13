@@ -12,13 +12,13 @@
 
 ## Requirements
 
-Built with Android NDK Toolchain, support api 28 (Android 9.0) and above.
+1. a version is built with Android NDK Toolchain, supporting api 28 (Android 9.0) and above.
 
-`make-linux.mk` in ZeroTierOne does not support armv7 (see `-mtune=`), so it only supports aarch64 here
+2. another version is build with GCC toolchain, linking to Linux Syscalls statically
 
-Unofficial planet is not supported because I don't know hot to compile rust with NDK 😭
+Unofficial planet supported; SSO (zeroidc) supported in the version built with GCC for AArch64
 
-Maybe we can compile with gcc cross-compiling toolchain statically, without linking system calls, but there could be potential compatibility problems.
+AArch64 suppots ARMv8-A and above; Arm version supports ARMv7-A (compiling with `-march=armv7-a`)
 
 ## Installation
 

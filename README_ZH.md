@@ -10,14 +10,13 @@
 
 ## 运行要求
 
-使用 NDK 编译，支持 api 28 (Android 9.0) 及以上的设备
+1. 使用 NDK 编译的版本，支持 api 28 (Android 9.0) 及以上的设备
 
-由于 ZeroTierOne 的 make-linux.mk 尚不支持 armv7 的设备（看似支持，但是 `-mtune=` 说明了一切），所以此处也不支持
+2. 使用 GCC 编译的版本，静态链接到 Linux Syscall，兼容性未知
 
-暂时不支持 SSO 即自建 planet，因为 NDK 编译 rust 还没玩明白 😭
+均支持自建 planet；GCC AArch64 有支持 SSO (zeroidc) 的版本
 
-有其他项目使用 gcc 交叉编译工具链静态编译，支持了自建 planet，本仓库应该会出相应版本，可能存在较大兼容性问题
-（如经过测试，必须在 root 下运行，否则 Bad System Call，可能是 `/system/lib, /vendor/lib` 没有权限访问造成的，理论上还是能够完全支持，只是怕 Android 阉割内核）
+AArch64 版本支持 ARMv8-A 及以上；Arm 版本均对 ARMv7-A 进行编译 (`-march=armv7-a`)
 
 ## 安装
 

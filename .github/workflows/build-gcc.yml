@@ -48,7 +48,7 @@ jobs:
           pip3 install toml
           python3 build/build_helper.py
 
-      - name: Build for Aarch64
+      - name: Build for AArch64
         run: |
           CC=aarch64-linux-gnu-gcc
           CXX=aarch64-linux-gnu-g++
@@ -56,21 +56,21 @@ jobs:
           cd ZeroTierOne
           mv make-linux.mk.aarch64 make-linux.mk
           make clean
-          make --silent -j $(nproc) ZT_SSO_SUPPORTED=0 ZT_STATIC=1 ZT_DEBUG=0 CC="$CC -w" CXX="$CXX -w" LDFLAGS="-s"
+          make --silent -j $(nproc) ZT_SSO_SUPPORTED=0 ZT_STATIC=1 ZT_DEBUG=0 CC=$CC CXX=$CXX LDFLAGS="-s"
           cd ..
 
           cp ZeroTierOne/zerotier-one magisk/zerotier
           cd magisk
           zip -q -r ../zerotier-magisk-aarch64-gcc.zip .
 
-      - name: Build for Aarch64 with SSO
+      - name: Build for AArch64 with SSO
         run: |
           CC=aarch64-linux-gnu-gcc
           CXX=aarch64-linux-gnu-g++
 
           cd ZeroTierOne
           make clean
-          make --silent -j $(nproc) ZT_STATIC=1 ZT_DEBUG=0 CC="$CC -w" CXX="$CXX -w" LDFLAGS="-s"
+          make --silent -j $(nproc) ZT_STATIC=1 ZT_DEBUG=0 CC=$CC CXX=$CXX LDFLAGS="-s"
           cd ..
 
           cp ZeroTierOne/zerotier-one magisk/zerotier
@@ -86,7 +86,7 @@ jobs:
           cd ZeroTierOne
           mv make-linux.mk.arm make-linux.mk
           make clean
-          make --silent -j $(nproc) ZT_SSO_SUPPORTED=0 ZT_STATIC=1 ZT_DEBUG=0 CC="$CC $FLAGS" CXX="$CXX $FLAGS" LDFLAGS="-s"
+          make --silent -j $(nproc) ZT_SSO_SUPPORTED=0 ZT_STATIC=1 ZT_DEBUG=0 CC=$CC CXX=$CXX LDFLAGS="-s"
           cd ..
 
           cp ZeroTierOne/zerotier-one magisk/zerotier/

@@ -53,7 +53,7 @@ jobs:
           pip3 install toml
           python3 build/build_helper.py
 
-      - name: Build for Aarch64
+      - name: Build for AArch64
         run: |
           PATH=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
           NDK_ROOT=`pwd`/android-ndk-$ndk/toolchains/llvm/prebuilt/linux-x86_64
@@ -93,11 +93,11 @@ jobs:
           cd ZeroTierOne
           mv make-linux.mk.arm.ndk make-linux.mk
           make clean
-          make -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp" DEFS="-I../libnatpmp -D__GLIBC__=0"
+          make --silent -j $(nproc) ZT_DEBUG=0 ZT_SSO_SUPPORTED=0 CC=$CC CXX=$CXX LDFLAGS="-L../libnatpmp" DEFS="-I../libnatpmp -D__GLIBC__=0"
           cd ..
 
           cp ZeroTierOne/zerotier-one magisk/zerotier/
-          cp $NDK_ROOT/sysroot/usr/lib/arm-linux-android/libc++_shared.so magisk/zerotier/lib
+          cp $NDK_ROOT/sysroot/usr/lib/arm-linux-androideabi/libc++_shared.so magisk/zerotier/lib
           cd magisk
           zip -q -r ../zerotier-magisk-arm-ndk.zip .
 
