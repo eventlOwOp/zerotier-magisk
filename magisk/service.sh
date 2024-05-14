@@ -2,16 +2,15 @@
 
 MODDIR=${0%/*}
 
-zerotier_root=/data/adb/zerotier
+ZTROOT=/data/adb/zerotier
+ZTRUNTIME=$ZTROOT/run
 
-pipe=/data/adb/zerotier/run/pipe
-zerotier_log=/data/adb/zerotier/run/zerotier.log
-daemon_log=/data/adb/zerotier/run/daemon.log
-network_id_path=/sdcard/Android/zerotier/network_id.txt
-pid=-1
+pipe=$ZTRUNTIME/pipe
+ZTLOG=$ZTRUNTIME/zerotier.log
+daemon_log=$ZTRUNTIME/daemon.log
 
-cli_output=/data/adb/zerotier/run/cli.out
-cli_pid=/data/adb/zerotier/run/cli.pid
+cli_output=$ZTRUNTIME/cli.out
+cli_pid=$ZTRUNTIME/cli.pid
 
 log() {
   t=`date +"%m-%d %H:%M:%S.%3N"`
@@ -23,40 +22,31 @@ log_cli() {
 }
 _stop() {
   pid=`pidof zerotier-one`
-  if [ $? -ne 0 ]; then
+  if [[ $? -ne 0 ]]; then
     log "zerotier-one not running"
-    return 1
+    return
   fi
 
   kill -9 $pid
-  ret=$?
-
-  if [ $ret -eq 0 ]; then
-    log "stopped zerotier-one"
-    return 0
-  else
+  if [[ $? -ne 0 ]]; then
     log "kill zerotier-one failed"
+    return
   fi
-  
-  return 1
+
+  wait
+  log "stopped zerotier-one"
 }
-
 __start() {
-  nohup ./zerotier-one -d >> $zerotier_log 2>&1 &
-
-  sleep 1
-
-  pid=`pidof zerotier-one`
+  $ZTROOT/zerotier-one -d >> $ZTLOG 2>&1 &
 }
 _start() {
   if pid=`pidof zerotier-one`; then
     log "zerotier-one already running pid $pid"
   else
     __start
+    pid=`pidof zerotier-one`
     log "started zerotier-one pid $pid"
   fi
-  
-  return 0
 }
 _status() {
   # fake systemd lol
@@ -72,45 +62,14 @@ _status() {
   fi
 }
 
-# _join() {
-#   nid=$(cat $network_id_path)
-
-#   ./zerotier-cli join $nid >> $zerotier_log 2>&1
-
-#   if [ $? -ne 0 ]; then
-#     log "join network failed"
-#     return 1
-#   else
-#     log "joined $nid"
-#   fi
-
-#   return 0
-# }
-
-# _leave() {
-#   nid=$(cat $network_id_path)
-
-#   ./zerotier-cli leave $nid >> $zerotier_log 2>&1
-
-#   if [ $? -ne 0 ]; then
-#     log "leave network failed"
-#     return 1
-#   else
-#     log "left $nid"
-#   fi
-
-#   return 0
-# }
-
-cd /data/adb/zerotier
-rm -f ./run/*
+cd $ZTROOT
+rm -f $ZTRUNTIME
 mkfifo $pipe
 
 ip rule add from all lookup main pref 1
 export LD_LIBRARY_PATH=/data/adb/zerotier/lib
 
 __start
-(sleep 20 && _join) &
 
 while true
 do
@@ -118,13 +77,9 @@ do
     case "$cmd" in
       "start") _start;;
       "stop") _stop;;
-      "restart")
-        _stop
-        sleep 1
-        _start;;
+      "restart") _stop; _start;;
       "status") _status;;
-      *)
-        log "unknown command $cmd";;
+      *) log "unknown command $cmd";;
     esac
 
     cpid=`cat $cli_pid`

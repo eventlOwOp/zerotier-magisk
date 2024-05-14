@@ -15,28 +15,24 @@ rm -f $cli_output
 echo $$ > $cli_pid
 
 on_receive() {
+  kill -9 %%
   cat $cli_output
   exit 0
 }
 run() {
-  echo $1 > $pipe
+  echo $cmd > $pipe
 }
 
 trap 'on_receive' SIGUSR1
+cmd=$1
 
-if [[ "$1" ]]; then
-  if [[ "$2" ]]; then
-    echo $help_text
-    exit 1
-  fi
-
-  case "$1" in
-    "start") run $1;;
-    "stop") run $1;;
-    "restart") run $1;;
-    "status") run $1;;
-    *)
-      echo "unknown command $1";;
+if [[ $# -eq 1 ]]; then
+  case "$cmd" in
+    "start") run;;
+    "stop") run;;
+    "restart") run;;
+    "status") run;;
+    *) echo "unknown command $cmd";;
   esac
 else
   echo $help_text
@@ -44,6 +40,7 @@ else
 fi
 
 sleep 20 &
-wait $!
-echo "time out"
+wait
+
+echo "20 seconds time out"
 exit 1
