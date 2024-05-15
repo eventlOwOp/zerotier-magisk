@@ -1,8 +1,8 @@
-# ZeroTier for Magisk - run ZeroTier in the background
-
-![ZeroTier for Magisk Icon](https://github.com/eventlOwOp/zerotier-magisk/master/images/icon.png)
-
 <div align="center">
+
+<img alt="ZeroTier for Magisk Icon" src="https://github.com/eventlOwOp/zerotier-magisk/blob/master/images/icon.png" width="128" />
+
+# ZeroTier for Magisk
 
 [[中文](https://github.com/eventlOwOp/zerotier-magisk/blob/master/README_ZH.md) | English]
 
