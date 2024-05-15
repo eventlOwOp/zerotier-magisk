@@ -1,5 +1,7 @@
 # ZeroTier for Magisk - 后台运行你的 ZeroTier
 
+![ZeroTier for Magisk Icon](https://github.com/eventlOwOp/zerotier-magisk/master/images/icon.png)
+
 <div align="center">
 
 [中文 | [English](https://github.com/eventlOwOp/zerotier-magisk/blob/master/README.md)]
