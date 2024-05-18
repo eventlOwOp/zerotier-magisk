@@ -19,6 +19,7 @@ ui_print "- link to system"
 mkdir -p $MODPATH$SYSBIN
 ln -sf $ZTPATH/zerotier.sh $MODPATH$SYSBIN/zerotier.sh
 ln -sf $ZTPATH/zerotier-cli $MODPATH$SYSBIN/zerotier-cli
+ln -sf $ZTPATH/zerotier-idtool $MODPATH$SYSBIN/zerotier-idtool
 
 ui_print "- set file permission"
 set_perm_recursive $MODPATH 0 0 0755 0644

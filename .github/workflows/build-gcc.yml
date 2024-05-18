@@ -29,7 +29,7 @@ jobs:
       - name: Patch ZeroTier for Cross-Compile
         run: |
           pip3 install toml
-          python3 build/build_helper.py
+          python3 build/patch.py
 
       - name: Build for AArch64
         run: |

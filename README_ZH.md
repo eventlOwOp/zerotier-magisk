@@ -8,7 +8,11 @@
 
 </div>
 
-将 ZeroTier 保持后台运行，不与其他 Android VPN 应用程序冲突
+**将 ZeroTier 保持后台运行**
+
+**不与其他 Android VPN 应用程序冲突**
+
+**使用 Android App 进行控制**
 
 ## 运行要求
 
@@ -22,39 +26,68 @@ AArch64 版本支持 ARMv8-A 及以上；Arm 版本均对 ARMv7-A 进行编译 (
 
 ## 安装
 
-1. 从 Release 下载压缩包
-2. 导入 magisk 进行安装
-3. 将你的 16 位 ZeroTier network id 写入 `/sdcard/Android/zerotier/network_id.txt`
-4. 重启
+1. 从 Release 处下载 magisk 模块压缩包，并安装
+2. 从 Release 处下载控制器的 apk 安装包，并安装
+3. 重启
+4. 打开控制器 App，输入 16 位 network id 并加入
+5. 享用 😋
 
-你可以用 `su` 执行 `sh /data/adb/zerotier/zerotier.sh restart` 来重启，或者干脆重启手机，计划写一个 app 来完成
+## 使用
 
-### 文件
+### 控制器 App
+
+需要 root 授权
+
+| 功能             | 支持状态 |
+| :--------------- | :------- |
+| 查看运行状态     | ✅       |
+| 启动停止重启     | ✅       |
+| 加入离开 network | ✅       |
+| 加入离开 planet  | ❎       |
+
+<div>
+<img alt="ZeroTier for Magisk Icon" src="https://github.com/eventlOwOp/zerotier-magisk/blob/master/images/app_home.jpg" width="192" />
+<img alt="ZeroTier for Magisk Icon" src="https://github.com/eventlOwOp/zerotier-magisk/blob/master/images/app_network.jpg" width="192" />
+</div>
+
+### 命令行
+
+查看运行状态，或者启动重启停止，使用 `zerotier.sh`
+
+`Usage: zerotier.sh {start|stop|restart|status}`
+
+ZeroTierOne 支持的所有命令行操作：使用 `zerotier-cli / zerotier-idtool`
+
+（`zerotier-one` 并未导出到 `/system/bin`）
+
+## 目录结构
 
 ```
-/data/adb/zerotier/
- | - run/
- |   | - pipe                   # pipe to service.sh
- |   | - daemon.log             # service.sh log
- |   ` - zerotier.log           # zerotier-one log
- | - home/                      # zerotier-one home directory
- |   ` - ...
- | - lib/
- |   ` - libc++_shared.so       # NDK dynamic library
- | - zerotier.sh                # tool to communicate with service.sh
- | - zerotier-one               # zerotier-one executable
- | - zerotier-cli -> zerotier-one
- ` - zerotier-idtool -> zerotier-one
+/data/adb/zerotier
+├── home                                    # zerotier-one home directory
+│   ├── authtoken.secret                    # zerotier-one http interface authtoken
+│   ├── zerotier-one.pid                    # zerotier-one pid
+│   ├── zerotier-one.port                   # zerotier-one port
+│   └── ...
+├── lib                                     # only in NDK compiled module
+│   └── libc++_shared.so                    # NDK dynamic library
+├── run
+│   ├── daemon.log                          # service.sh log
+│   ├── pipe                                # named pipe to interact with service.sh
+│   ├── zerotier.log                        # zerotier-one log
+│   └── ...
+├── zerotier-cli -> zerotier-one            # zerotier-one command line interface
+├── zerotier-idtool -> zerotier-one         # zerotier-one id tool
+├── zerotier-one                            # zerotier-one executable
+└── zerotier.sh
 ```
 
-ZeroTier 可执行文件和操作的 Shell 脚本放在 `/data/adb/zerotier/`
+ZeroTier 可执行文件和操作的 Shell 脚本放在 `/data/adb/zerotier/` 下，同时复制到 `/system/bin`（PATH 中）以便于直接执行（除了 `zerotier-one`）
 
-`zerotier.sh` 向管道 `run/pipe` 写入， `service.sh` 读取管道，然后进行操作
+`zerotier.sh` 通过命名管道与 `service.sh` 交互，防止 ZeroTier 作为 Shell 的子进程运行
 
-`Usage: sh zerotier.sh {start|stop|restart|join|leave}`
+日志存放在 `/data/adb/zerotier/run` 下，`service.sh` 为 `daemon.log`，ZeroTier 为 `zerotier.log`.
 
-log files are placed in `run`, `daemon.log` for `service.sh` and `zerotier.log` for ZeroTierOne.
+## 自行编译
 
-### 自行编译
-
-使用 NDK，参考 `.github/workflow/build.yml`
+参考 `.github/workflow/build-{gcc|ndk}.yml`
