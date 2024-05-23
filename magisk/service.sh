@@ -4,6 +4,7 @@ MODDIR=${0%/*}
 
 ZTROOT=/data/adb/zerotier
 ZTRUNTIME=$ZTROOT/run
+APPROOT=/data/data/com.eventlowop.zerotier_magisk_app/files
 
 pipe=$ZTRUNTIME/pipe
 ZTLOG=$ZTRUNTIME/zerotier.log
@@ -66,8 +67,16 @@ cd $ZTROOT
 rm -f $ZTRUNTIME
 mkfifo $pipe
 
+chmod 666 $pipe $cli_output $cli_pid
+
 ip rule add from all lookup main pref 1
 export LD_LIBRARY_PATH=/data/adb/zerotier/lib
+
+if [[ -e /data/data/com.eventlowop.zerotier_magisk_app/files ]]; then
+	ln -sf $pipe $APPROOT/pipe
+  ln -sf $cli_output $APPROOT/cli.out
+  ln -sf $cli_pid $APPROOT/cli.pid
+fi
 
 __start
 
