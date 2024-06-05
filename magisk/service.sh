@@ -70,7 +70,7 @@ mkfifo $pipe
 chmod 666 $pipe $cli_output $cli_pid
 
 ip rule add from all lookup main pref 1
-export LD_LIBRARY_PATH=/data/adb/zerotier/lib
+export LD_LIBRARY_PATH=/system/lib64:/data/adb/zerotier/lib
 
 if [[ -e /data/data/com.eventlowop.zerotier_magisk_app/files ]]; then
 	ln -sf $pipe $APPROOT/pipe
