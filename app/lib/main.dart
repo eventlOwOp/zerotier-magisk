@@ -42,7 +42,7 @@ class MyHomePage extends StatefulWidget {
 
 Future zerotierCommand(String exe, String command) {
   return Process.run('su', ['-c', '/data/adb/zerotier/$exe', command],
-      environment: {'LD_LIBRARY_PATH': '/data/adb/zerotier/lib'});
+      environment: {'LD_LIBRARY_PATH': '/system/lib64:/data/adb/zerotier/lib'});
 }
 
 class _MyHomePageState extends State<MyHomePage> {
