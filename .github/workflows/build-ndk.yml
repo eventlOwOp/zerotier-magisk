@@ -26,9 +26,8 @@ jobs:
           repository: miniupnp/libnatpmp
           path: libnatpmp
 
-      - name: Get Date
-        id: date
-        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+      - id: commit
+        uses: prompt/actions-commit-hash@v3
 
       - name: Prepare NDK Toolchain
         run: |
@@ -65,7 +64,7 @@ jobs:
       - name: Upload AArch64
         uses: actions/upload-artifact@v4
         with:
-          name: zerotier-magisk-aarch64-ndk-${{ steps.date.outputs.date }}
+          name: zerotier-magisk-aarch64-ndk-${{ steps.commit.outputs.short }}
           path: magisk/
 
       - name: Build for Arm
@@ -93,5 +92,5 @@ jobs:
       - name: Upload Arm
         uses: actions/upload-artifact@v4
         with:
-          name: zerotier-magisk-arm-ndk-${{ steps.date.outputs.date }}
+          name: zerotier-magisk-arm-ndk-${{ steps.commit.outputs.short }}
           path: magisk/

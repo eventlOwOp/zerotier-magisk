@@ -16,6 +16,9 @@ jobs:
           repository: zerotier/ZeroTierOne
           path: ZeroTierOne
 
+      - id: commit
+        uses: prompt/actions-commit-hash@v3
+
       - name: Prepare GCC Toolchain
         run: |
           sudo apt-get install -qqy gcc-aarch64-linux-gnu gcc-arm-linux-gnueabihf g++-aarch64-linux-gnu g++-arm-linux-gnueabihf
@@ -43,8 +46,12 @@ jobs:
           cd ..
 
           cp ZeroTierOne/zerotier-one magisk/zerotier
-          cd magisk
-          zip -q -r ../zerotier-magisk-aarch64-gcc.zip .
+
+      - name: Upload AArch64
+        uses: actions/upload-artifact@v4
+        with:
+          name: zerotier-magisk-aarch64-gcc-${{ steps.commit.outputs.short }}
+          path: magisk/
 
       - name: Build for AArch64 with SSO
         run: |
@@ -57,8 +64,12 @@ jobs:
           cd ..
 
           cp ZeroTierOne/zerotier-one magisk/zerotier
-          cd magisk
-          zip -q -r ../zerotier-magisk-aarch64-gcc-SSO.zip .
+
+      - name: Upload AArch64 SSO
+        uses: actions/upload-artifact@v4
+        with:
+          name: zerotier-magisk-aarch64-gcc-SSO-${{ steps.commit.outputs.short }}
+          path: magisk/
 
       - name: Build for Arm
         run: |
@@ -73,26 +84,9 @@ jobs:
           cd ..
 
           cp ZeroTierOne/zerotier-one magisk/zerotier/
-          cd magisk
-          zip -q -r ../zerotier-magisk-arm-gcc.zip .
 
-      - name: Get Date
-        id: date
-        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Arm
+        uses: actions/upload-artifact@v4
         with:
-          files: |
-            zerotier-magisk-aarch64-gcc-SSO.zip
-            zerotier-magisk-aarch64-gcc.zip
-            zerotier-magisk-arm-gcc.zip
-          tag_name: SNAPSHOT-GCC-${{ steps.date.outputs.date }}
-          name: SNAPSHOT-GCC-${{ steps.date.outputs.date }}
-          draft: false
-          prerelease: true
-
-      # - name: Debugging with tmate
-      #   uses: mxschmitt/action-tmate@v3.18
+          name: zerotier-magisk-arm-gcc-${{ steps.commit.outputs.short }}
+          path: magisk/
