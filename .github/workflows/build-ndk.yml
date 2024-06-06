@@ -26,6 +26,10 @@ jobs:
           repository: miniupnp/libnatpmp
           path: libnatpmp
 
+      - name: Get Date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
       - name: Prepare NDK Toolchain
         run: |
           wget -qO ndk.zip https://dl.google.com/android/repository/android-ndk-$ndk-linux.zip
@@ -57,8 +61,12 @@ jobs:
           mkdir -p magisk/zerotier/lib
           cp ZeroTierOne/zerotier-one magisk/zerotier
           cp $NDK_ROOT/sysroot/usr/lib/aarch64-linux-android/libc++_shared.so magisk/zerotier/lib
-          cd magisk
-          zip -q -r ../zerotier-magisk-aarch64-ndk.zip .
+
+      - name: Upload AArch64
+        uses: actions/upload-artifact@v4
+        with:
+          name: zerotier-magisk-aarch64-ndk-${{ steps.date.outputs.date }}
+          path: magisk/
 
       - name: Build for Arm
         run: |
@@ -81,25 +89,9 @@ jobs:
 
           cp ZeroTierOne/zerotier-one magisk/zerotier/
           cp $NDK_ROOT/sysroot/usr/lib/arm-linux-androideabi/libc++_shared.so magisk/zerotier/lib
-          cd magisk
-          zip -q -r ../zerotier-magisk-arm-ndk.zip .
 
-      - name: Get Date
-        id: date
-        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
-
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Arm
+        uses: actions/upload-artifact@v4
         with:
-          files: |
-            zerotier-magisk-aarch64-ndk.zip
-            zerotier-magisk-arm-ndk.zip
-          tag_name: SNAPSHOT-NDK-${{ steps.date.outputs.date }}
-          name: SNAPSHOT-NDK-${{ steps.date.outputs.date }}
-          draft: false
-          prerelease: true
-
-      # - name: Debugging with tmate
-      #   uses: mxschmitt/action-tmate@v3.18
+          name: zerotier-magisk-arm-ndk-${{ steps.date.outputs.date }}
+          path: magisk/
