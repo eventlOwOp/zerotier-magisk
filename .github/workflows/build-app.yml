@@ -1,0 +1,31 @@
+name: build app
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout zerotier-magisk
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: build target apk
+        run: |
+          cd app
+          flutter pub get
+          flutter build apk
+
+      - id: commit
+        uses: prompt/actions-commit-hash@v3
+
+      - name: Upload AArch64
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-${{ steps.commit.outputs.short }}
+          path: app/build/app/outputs/flutter-apk/app-release.apk
