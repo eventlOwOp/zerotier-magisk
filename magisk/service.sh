@@ -37,11 +37,8 @@ mkdir -p $ZTROOT/run
 ip rule add from all lookup main pref 1
 ip -6 rule add from all lookup main pref 1
 
-# LD_LIBRARY_PATH for NDK
-export LD_LIBRARY_PATH=$ZTROOT/lib
-
 # start zerotier
-$ZTROOT/zerotier-one -d >> $ZT_LOG 2>&1 &
+__start
 
 # ----------------------------------------------
 #             CLI before login

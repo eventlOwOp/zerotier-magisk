@@ -10,3 +10,10 @@ PIPE_CLI=$ZTROOT/run/pipe
 PIPE_APP=$APPROOT/run/pipe
 
 BB=/data/adb/magisk/busybox
+
+# LD_LIBRARY_PATH for NDK
+export LD_LIBRARY_PATH=/system/lib64:/data/adb/zerotier/lib
+
+__start() {
+    nohup $ZTROOT/zerotier-one -d &>> $ZT_LOG &
+}

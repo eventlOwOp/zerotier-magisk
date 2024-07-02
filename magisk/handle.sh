@@ -5,9 +5,6 @@ MODDIR=${0%/*}
 # load variables
 . $MODDIR/vars.sh
 
-# LD_LIBRARY_PATH for NDK
-export LD_LIBRARY_PATH=/system/lib64:/data/adb/zerotier/lib
-
 log_cli() {
   echo -e "$1" >> $ZTROOT/run/cli.out
 }
@@ -29,32 +26,34 @@ _stop() {
     return
   fi
 
-  wait
-  sleep 1 # sometimes it fails without sleeping
-
   log "stopped zerotier-one"
 }
 _start() {
-  if pid=`pidof zerotier-one`; then
-    log "zerotier-one already running pid $pid"
+  if pidof zerotier-one > /dev/null; then
+    log "zerotier-one already running"
   else
-    $ZTROOT/zerotier-one -d >> $ZT_LOG 2>&1 &
-    pid=`pidof zerotier-one`
-    log "started zerotier-one pid $pid"
+    __start
+    log "started zerotier-one"
   fi
 }
 _status() {
   # fake systemd lol
-  if pid=`pidof zerotier-one`; then
+  read pid < $ZTROOT/home/zerotier-one.pid
+
+  if pidof zerotier-one > /dev/null; then
     log_cli "\033[32m●\033[0m zerotier-one.service - ZeroTier One - Global Area Networking"
     log_cli "     Active: \033[32mactive (running)\033[0m"
     log_cli "   Main PID: $pid (zerotier-one)"
   else
-    read pid_ < $ZTROOT/home/zerotier-one.pid
     log_cli "○ zerotier-one.service - ZeroTier One - Global Area Networking"
     log_cli "     Active: inactive (dead)"
-    log_cli "   Main PID: $pid_ (code=exited)"
+    log_cli "   Main PID: $pid (code=exited)"
   fi
+}
+_restart() {
+  _stop
+  __start
+  log "started zerotier-one"
 }
 
 # ----------------------------------------------
@@ -68,7 +67,7 @@ if [[ $# == 2 && "$1" == "w" ]]; then
   case "$cmd" in
     "start") _start;;
     "stop") _stop;;
-    "restart") _stop; _start;;
+    "restart") _restart;;
     "status") _status;;
     *) log "unknown command $cmd";;
   esac
