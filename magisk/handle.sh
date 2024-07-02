@@ -3,7 +3,7 @@
 MODDIR=${0%/*}
 
 # load variables
-. $MODDIR/vars.sh
+. $MODDIR/lib.sh
 
 log_cli() {
   echo -e "$1" >> $ZTROOT/run/cli.out

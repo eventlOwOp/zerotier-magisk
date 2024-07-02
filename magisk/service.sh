@@ -3,7 +3,7 @@
 MODDIR=${0%/*}
 
 # load variables
-. $MODDIR/vars.sh
+. $MODDIR/lib.sh
 
 # wait_until_login from yc9559/uperf at uperf/magisk/script/libcommon.sh
 wait_until_login() {
