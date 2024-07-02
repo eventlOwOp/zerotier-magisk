@@ -27,7 +27,7 @@ class AuthedClient {
   late Future<AuthedClientInner> client;
   Future<AuthedClientInner> loadSecret() async {
     final path = (await getApplicationDocumentsDirectory()).path;
-    final file = File('$path/authtoken');
+    final file = File('$path/run/authtoken');
     final token = await file.readAsString();
 
     return AuthedClientInner(token.trim(), http.Client());

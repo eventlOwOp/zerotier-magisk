@@ -5,6 +5,7 @@ import 'dart:developer' as developer;
 import 'package:flutter/services.dart';
 
 import './authed_client.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,8 +41,10 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-Future zerotierCommand(String command) {
-  return Process.run('echo', [command, '>/data/data/com.eventlowop.zerotier_magisk_app/files/pipe']);
+Future<void> zerotierCommand(String command) async {
+  final path = (await getApplicationDocumentsDirectory()).path;
+  final file = File('$path/run/pipe');
+  await file.writeAsString(command);
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -72,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void joinNetwork(String id) async {
+  Future<void> joinNetwork(String id) async {
     final client = await authed.client;
     final resp = await client.put(Uri.http('localhost:9993', 'network/$id'));
     if (resp.statusCode != 200) {
