@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 class AuthedClientInner extends http.BaseClient {
   final String _secret;
@@ -25,9 +26,11 @@ class AuthedClientInner extends http.BaseClient {
 class AuthedClient {
   late Future<AuthedClientInner> client;
   Future<AuthedClientInner> loadSecret() async {
-    final results = await Process.run(
-        'su', ['-c', 'cat', '/data/adb/zerotier/home/authtoken.secret']);
-    return AuthedClientInner(results.stdout.toString().trim(), http.Client());
+    final path = (await getApplicationDocumentsDirectory()).path;
+    final file = File('$path/authtoken');
+    final token = await file.readAsString();
+
+    return AuthedClientInner(token.trim(), http.Client());
   }
 
   AuthedClient() {

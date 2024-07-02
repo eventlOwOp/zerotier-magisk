@@ -14,6 +14,8 @@
 
 **Use Android App to control ZeroTier**
 
+**Support for Private Root Servers**
+
 ## Requirements
 
 1. a version is built with Android NDK Toolchain, supporting api 28 (Android 9.0) and above.
@@ -34,9 +36,13 @@ AArch64 suppots ARMv8-A and above; Arm version supports ARMv7-A (compiling with 
 
 ## Usage
 
+### Use Private Root Servers
+
+Replace `/data/adb/zerotier/home/planet` with your own `planet` file.
+
 ### Controller App
 
-Needs root privilege
+Does not need root privilege
 
 | Feature            | Supported? |
 | :----------------- | :--------- |

@@ -40,9 +40,8 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-Future zerotierCommand(String exe, String command) {
-  return Process.run('su', ['-c', '/data/adb/zerotier/$exe', command],
-      environment: {'LD_LIBRARY_PATH': '/system/lib64:/data/adb/zerotier/lib'});
+Future zerotierCommand(String command) {
+  return Process.run('echo', [command, '>/data/data/com.eventlowop.zerotier_magisk_app/files/pipe']);
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -125,9 +124,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _MyHomePageState() : super() {
     restartFn =
-        cmdButtonWrapper(() => zerotierCommand('zerotier.sh', 'restart'));
-    startFn = cmdButtonWrapper(() => zerotierCommand('zerotier.sh', 'start'));
-    stopFn = cmdButtonWrapper(() => zerotierCommand('zerotier.sh', 'stop'));
+        cmdButtonWrapper(() => zerotierCommand('restart'));
+    startFn = cmdButtonWrapper(() => zerotierCommand('start'));
+    stopFn = cmdButtonWrapper(() => zerotierCommand('stop'));
     joinFn = cmdButtonWrapper(() => joinNetwork(_idInputController.text));
   }
 

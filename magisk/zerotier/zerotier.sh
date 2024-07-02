@@ -1,26 +1,24 @@
 #!/system/bin/sh
-pipe=/data/adb/zerotier/run/pipe
 
-cli_output=/data/adb/zerotier/run/cli.out
-cli_pid=/data/adb/zerotier/run/cli.pid
+ZTROOT=/data/adb/zerotier
+PIPE=$ZTROOT/run/pipe
 
-help_text="Usage: zerotier.sh {start|stop|restart|status}"
+HELP="Usage: zerotier.sh {start|stop|restart|status}"
 
-if [[ ! -p $pipe ]]; then
+if [[ ! -f $PIPE ]]; then
     echo "daemon not running"
     exit 1
 fi
 
-rm -f $cli_output
-echo $$ > $cli_pid
+echo $$ > $ZTROOT/run/cli.pid
 
 on_receive() {
   kill -9 %%
-  cat $cli_output
+  cat $ZTROOT/run/cli.out
   exit 0
 }
 run() {
-  echo $cmd > $pipe
+  echo $cmd > $PIPE
 }
 
 trap 'on_receive' SIGUSR1
@@ -35,7 +33,7 @@ if [[ $# -eq 1 ]]; then
     *) echo "unknown command $cmd";;
   esac
 else
-  echo $help_text
+  echo $HELP
   exit 1
 fi
 

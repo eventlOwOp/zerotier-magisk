@@ -14,6 +14,8 @@
 
 **使用 Android App 进行控制**
 
+**支持自建 Planet**
+
 ## 运行要求
 
 1. 使用 NDK 编译的版本，支持 api 28 (Android 9.0) 及以上的设备
@@ -34,9 +36,13 @@ AArch64 版本支持 ARMv8-A 及以上；Arm 版本均对 ARMv7-A 进行编译 (
 
 ## 使用
 
+### 自建 Planet
+
+将 `/data/adb/zerotier/home/planet` 替换为自己的 planet 文件即可
+
 ### 控制器 App
 
-需要 root 授权
+无需 root 授权
 
 | 功能             | 支持状态 |
 | :--------------- | :------- |
