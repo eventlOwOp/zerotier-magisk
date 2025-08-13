@@ -26,6 +26,7 @@ ui_print "- set file permission"
 set_perm_recursive $MODPATH 0 0 0755 0644
 set_perm_recursive $ZTPATH 0 0 0755 0644
 set_perm $MODPATH/handle.sh 0 0 0755
+set_perm $MODPATH/hotspot_iprule.sh 0 0 0755
 set_perm $ZTPATH/zerotier.sh 0 0 0755
 set_perm $ZTPATH/zerotier-one 0 0 0755
 

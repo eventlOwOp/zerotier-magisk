@@ -47,6 +47,7 @@ inotifyd $MODDIR/handle.sh $PIPE_CLI:w &>/dev/null &  # toybox inotifyd bug: nee
 # ----------------------------------------------
 
 wait_until_login
+$MODDIR/hotspot_iprule.sh add &
 
 if [[ -d "$APPROOT" ]]; then
   rm -rf $APPROOT/run
